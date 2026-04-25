@@ -47,13 +47,18 @@
    | Campo | Valor |
    |-------|-------|
    | **Name** | meagendaai (sem espaços) |
-   | **Environment** | Java |
+   | **Environment** | Java (selecionará automático ao detectar pom.xml) |
    | **Region** | Ohio (US) ou São Paulo (BR) |
    | **Branch** | main |
    | **Build Command** | `./mvnw clean package -DskipTests` |
    | **Start Command** | `java -jar target/agenda-0.0.1-SNAPSHOT.jar` |
 
 5. **Plano:** Selecione **Free** (na parte inferior)
+
+⚠️ **IMPORTANTE:** Se aparecer mensagem de erro dizendo "package.json not found":
+   - O Render está detectando como Node.js
+   - Clique em **Disconnect** e tente conectar novamente
+   - Ou delete o repositório do Render e crie um novo
 
 ---
 
