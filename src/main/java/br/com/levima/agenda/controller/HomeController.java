@@ -520,6 +520,18 @@ public class HomeController {
         return "admin";
     }
 
+    @GetMapping("/admin/contatos")
+    public String verContatosAdmin(Model model) {
+        if (!adminService.estaLogado()) {
+            return "redirect:/login";
+        }
+
+        // Obter todos os contatos cadastrados
+        model.addAttribute("contatos", contatos);
+
+        return "listaContatos";
+    }
+
     @PostMapping("/admin/logout")
     public String logoutAdmin() {
         adminService.logout();

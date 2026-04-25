@@ -352,9 +352,14 @@
                 <h1>🔐 Painel Administrativo</h1>
                 <p>Configure disponibilidade e visualize agendamentos</p>
             </div>
-            <form method="POST" action="/admin/logout" style="margin: 0;">
-                <button type="submit" class="logout-btn">Sair</button>
-            </form>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/admin/contatos" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                    👥 Ver Contatos
+                </a>
+                <form method="POST" action="/admin/logout" style="margin: 0;">
+                    <button type="submit" class="logout-btn">Sair</button>
+                </form>
+            </div>
         </div>
 
         <div th:if="${sucesso}" class="alert alert-success">
