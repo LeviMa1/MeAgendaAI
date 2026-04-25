@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Contato</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #5568d3;
+        }
+
+        .btn-reset {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background-color: #d0d0d0;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #155724;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-content {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+    <script>
+        function validarSenhas() {
+            const senha = document.getElementById('senha').value;
+            const confirmaSenha = document.getElementById('confirmaSenha').value;
+
+            if (senha !== confirmaSenha) {
+                alert('As senhas não conferem! Por favor, tente novamente.');
+                return false;
+            }
+
+            if (senha.length < 6) {
+                alert('A senha deve ter no mínimo 6 caracteres!');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Função para aplicar máscara no celular
+        function mascaraCelular(input) {
+            let valor = input.value.replace(/\D/g, '');
+
+            if (valor.length > 11) {
+                valor = valor.slice(0, 11);
+            }
+
+            if (valor.length >= 0) {
+                valor = valor.replace(/^(\d{0,2})(\d{0,5})(\d{0,4})$/, function(_, g1, g2, g3) {
+                    if (g3) {
+                        return '(' + g1 + ') ' + g2 + '-' + g3;
+                    } else if (g2) {
+                        return '(' + g1 + ') ' + g2;
+                    } else if (g1) {
+                        return '(' + g1;
+                    }
+                    return '';
+                });
+            }
+
+            input.value = valor;
+        }
+
+        // Aplicar máscara ao campo de celular
+        document.addEventListener('DOMContentLoaded', function() {
+            const celularInput = document.getElementById('celular');
+            if (celularInput) {
+                celularInput.addEventListener('input', function() {
+                    mascaraCelular(this);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Cadastro de Contato</h1>
+
+        <div th:if="${erro}" class="error-message" th:text="${erro}"></div>
+
+        <form method="POST" action="/cadastro" onsubmit="return validarSenhas()">
+            <div class="form-group">
+                <label for="nome">Nome *</label>
+                <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required>
+            </div>
+
+
+            <div class="form-group">
+                <label for="senha">Senha *</label>
+                <input type="password" id="senha" name="senha" placeholder="Digite uma senha segura" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmaSenha">Confirmação de Senha *</label>
+                <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Confirme sua senha" required>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Cadastrar</button>
+                <button type="reset" class="btn-reset">Limpar</button>
+            </div>
+        </form>
+
+        <div class="footer-link">
+            <a href="/">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>
+

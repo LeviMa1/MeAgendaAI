@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Confirmado - Agenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #28a745;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .message {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .user-name {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .redirect-message {
+            color: #999;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        a, button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-login {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background-color: #5568d3;
+        }
+
+        .btn-home {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-home:hover {
+            background-color: #d0d0d0;
+        }
+    </style>
+    <script>
+        // Redirecionar automaticamente após 1 segundo
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                window.location.href = '/login';
+            }, 1000);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+
+        <h1>Cadastro Confirmado!</h1>
+
+        <p class="message">
+            Parabéns, <span class="user-name" th:text="${primeiroNome}"></span>!
+        </p>
+
+        <p class="message">
+            Sua conta foi criada com sucesso. Você será redirecionado para a página de login em breve.
+        </p>
+
+        <div class="spinner"></div>
+
+        <div class="button-group">
+            <a href="/login" class="btn-login">Ir para Login</a>
+            <a href="/" class="btn-home">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>
+

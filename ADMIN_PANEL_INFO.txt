@@ -1,0 +1,63 @@
+<!--
+PAINEL ADMINISTRATIVO IMPLEMENTADO COM SUCESSO!
+
+Acesso:
+========
+URL: http://localhost:8080/admin/login
+Usuário: admin
+Senha: meag_456
+
+Funcionalidades:
+================
+1. Configurar horários disponíveis para atendimento
+   - Por dia da semana (segunda a sábado)
+   - Horários entre 08:00 e 17:00
+   - Selecionar quais horários estarão disponíveis
+
+2. Visualizar todos os agendamentos
+   - Nome do cliente
+   - Email do cliente
+   - Data e horário do agendamento
+   - Observações (se houver)
+   - Status do agendamento (confirmado, cancelado, pendente)
+   - Estatísticas: Total de agendamentos, Confirmados, Cancelados
+
+Estrutura criada:
+==================
+1. AdminService.java - Serviço para gerenciar dados do administrador
+   - Validação de login
+   - Gerenciamento de horários disponíveis por dia
+   - Armazenamento de sessão do admin
+
+2. adminLogin.html - Página de login do administrador
+   - Interface segura para autenticação
+   - Aviso de acesso restrito
+
+3. admin.html - Painel administrativo principal
+   - Seção para configurar horários disponíveis
+   - Seção para visualizar todos os agendamentos
+   - Estatísticas de agendamentos
+   - Botão para sair da sessão
+
+Rotas implementadas:
+====================
+GET  /admin/login - Mostrar formulário de login
+POST /admin/login - Validar credenciais do admin
+GET  /admin - Mostrar painel administrativo
+POST /admin/logout - Sair da sessão
+POST /admin/atualizar-horarios - Atualizar horários disponíveis
+
+Segurança:
+===========
+- Apenas "admin" com senha "meag_456" podem acessar
+- Redirecionamento automático se não estiver logado
+- Logout seguro
+
+Para testar:
+=============
+1. Acesse http://localhost:8080/admin/login
+2. Digite: admin / meag_456
+3. Visualize e modifique os horários disponíveis
+4. Veja todos os agendamentos realizados
+-->
+

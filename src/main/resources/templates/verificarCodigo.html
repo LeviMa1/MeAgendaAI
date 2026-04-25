@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Código - Agenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #5568d3;
+        }
+
+        .btn-cancel {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background-color: #d0d0d0;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-message {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 14px;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .code-input {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 10px;
+            font-family: monospace;
+        }
+    </style>
+    <script>
+        function validarCodigo() {
+            const codigo = document.getElementById('codigo').value;
+
+            if (codigo === null || codigo.trim() === '') {
+                alert('Por favor, digite o código enviado para seu celular!');
+                return false;
+            }
+
+            if (codigo.length !== 4 || isNaN(codigo)) {
+                alert('O código deve conter exatamente 4 dígitos!');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Auto-focus no campo de código
+        document.addEventListener('DOMContentLoaded', function() {
+            const codigoInput = document.getElementById('codigo');
+            if (codigoInput) {
+                codigoInput.focus();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Verificar Código</h1>
+        <p class="subtitle">Digite o código que você recebeu por SMS</p>
+
+        <div th:if="${erro}" class="error-message" th:text="${erro}"></div>
+
+        <div class="info-message">
+            Digite o código recebido por SMS no celular <strong th:text="${celularMascarado}"></strong>
+        </div>
+
+        <form method="POST" action="/verificar-codigo" onsubmit="return validarCodigo()">
+            <input type="hidden" name="email" th:value="${email}">
+
+            <div class="form-group">
+                <label for="codigo">Código de Verificação *</label>
+                <input type="text" id="codigo" name="codigo" class="code-input" placeholder="0000" maxlength="4" inputmode="numeric" required>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Confirmar</button>
+                <button type="button" class="btn-cancel" onclick="window.location.href='/cadastro'">Cancelar</button>
+            </div>
+        </form>
+
+        <div class="footer-link">
+            <p>Não recebeu o código? <a href="#" onclick="alert('Funcionalidade de reenvio em desenvolvimento'); return false;">Reenviar código</a></p>
+        </div>
+    </div>
+</body>
+</html>
+
+

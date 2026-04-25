@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Agendamentos - MeAgendaAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .welcome-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .btn-novo-agendamento {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-novo-agendamento:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .agendamentos-section {
+            margin-top: 30px;
+        }
+
+        .agendamentos-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .agendamento-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .agendamento-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .agendamento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .data-horario {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status.confirmado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.cancelado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .agendamento-detalhes {
+            margin: 15px 0;
+            color: #666;
+        }
+
+        .agendamento-detalhes p {
+            margin: 8px 0;
+        }
+
+        .agendamento-detalhes strong {
+            color: #333;
+        }
+
+        .agendamento-acoes {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cancelar {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancelar:hover {
+            background: #c82333;
+        }
+
+        .btn-editar {
+            background: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-editar:hover {
+            background: #0056b3;
+        }
+
+        .vazio-message {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+
+        .vazio-message p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background: #5a6268;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .agendamento-card {
+                padding: 15px;
+            }
+
+            .agendamento-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status {
+                margin-top: 10px;
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Meus Agendamentos</h1>
+            <p>Gerencie seus agendamentos de atendimento</p>
+        </div>
+
+        <div class="content">
+            <div th:if="${sucesso}" class="alert alert-success">
+                <strong>Sucesso!</strong> <span th:text="${mensagem}"></span>
+            </div>
+
+            <div th:if="${erro}" class="alert alert-error">
+                <strong>Erro!</strong> <span th:text="${erro}"></span>
+            </div>
+
+            <div class="welcome-section">
+                <h2>Bem-vindo!</h2>
+                <p>Olá <strong th:text="${nomeUsuario}"></strong>, aqui você pode visualizar e gerenciar todos os seus agendamentos de atendimento.</p>
+            </div>
+
+            <a href="/agendar" class="btn-novo-agendamento">+ Novo Agendamento</a>
+
+            <div class="agendamentos-section">
+                <h3>Meus Agendamentos</h3>
+
+                <div th:if="${agendamentos.isEmpty()}" class="vazio-message">
+                    <p>📅 Você ainda não tem nenhum agendamento!</p>
+                    <a href="/agendar" class="btn-novo-agendamento">Fazer um Agendamento</a>
+                </div>
+
+                <div th:unless="${agendamentos.isEmpty()}">
+                    <div th:each="agendamento : ${agendamentos}" class="agendamento-card">
+                        <div class="agendamento-header">
+                            <div class="data-horario">
+                                <span th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></span>
+                                às
+                                <span th:text="${agendamento.horario}"></span>
+                            </div>
+                            <span class="status" th:classappend="${'status-' + agendamento.status.toLowerCase()}"
+                                  th:text="${agendamento.status}"></span>
+                        </div>
+
+                        <div class="agendamento-detalhes">
+                            <p th:if="${agendamento.descricao != null and agendamento.descricao != ''}">
+                                <strong>Descrição:</strong> <span th:text="${agendamento.descricao}"></span>
+                            </p>
+                            <p>
+                                <strong>ID do Agendamento:</strong> <span th:text="${#strings.abbreviate(agendamento.id, 15)}"></span>
+                            </p>
+                        </div>
+
+                        <div class="agendamento-acoes" th:if="${agendamento.status == 'confirmado'}">
+                            <form method="POST" action="/cancelar-agendamento" style="display: inline;">
+                                <input type="hidden" name="id" th:value="${agendamento.id}">
+                                <button type="submit" class="btn-cancelar"
+                                        onclick="return confirm('Tem certeza que deseja cancelar este agendamento?')">
+                                    Cancelar Agendamento
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/" class="btn-voltar">← Voltar</a>
+        </div>
+    </div>
+</body>
+</html>
+

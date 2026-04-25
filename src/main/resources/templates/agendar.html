@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Agendamento - MeAgendaAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Estilos para disponibilidade */
+        #data[style*="border-color: rgb(40, 167, 69)"] {
+            background-color: #e6ffe6 !important;
+            border-color: #28a745 !important;
+        }
+
+        #data[style*="border-color: rgb(220, 53, 69)"] {
+            background-color: #ffe6e6 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .horarios-disponiveis {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .horario-btn {
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .horario-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .horario-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .horario-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e9ecef;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-voltar {
+            background: #6c757d;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-voltar:hover {
+            background: #5a6268;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            color: #004085;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Novo Agendamento</h1>
+            <p>Escolha data, horário e adicione detalhes</p>
+        </div>
+
+        <div class="content">
+            <div th:if="${erro}" class="alert alert-error">
+                <strong>Erro!</strong> <span th:text="${erro}"></span>
+            </div>
+
+
+            <form id="formAgendamento" method="POST" action="/agendar">
+                <div class="form-group">
+                    <label for="data">Data do Agendamento *</label>
+                    <input type="date" id="data" name="data" required
+                           th:min="${dataMinima}"
+                           onchange="carregarHorariosDisponiveis()">
+                </div>
+
+                <div class="form-group">
+                    <label for="horario">Horário *</label>
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Carregando horários disponíveis...</p>
+                    </div>
+                    <div id="horariosContainer" class="horarios-disponiveis" style="display: none;">
+                        <!-- Horários serão preenchidos via JavaScript -->
+                    </div>
+                    <input type="hidden" id="horario" name="horario" required>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9em;">Selecione um horário acima</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Observações</label>
+                    <textarea id="descricao" name="descricao"
+                              placeholder="Adicione observações sobre seu agendamento (opcional)"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-submit" id="btnSubmit">Confirmar Agendamento</button>
+                    <a href="/agenda" class="btn-voltar">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Array para armazenar datas disponíveis
+        let diasDisponiveisList = [];
+
+        // Carregar datas disponíveis ao iniciar a página
+        function carregarDatasDisponiveis() {
+            fetch('/api/datas-disponiveis')
+                .then(response => response.json())
+                .then(data => {
+                    diasDisponiveisList = data.datas || [];
+                    console.log('Datas disponíveis:', diasDisponiveisList);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar datas:', error);
+                    diasDisponiveisList = [];
+                });
+        }
+
+        function carregarHorariosDisponiveis() {
+            const data = document.getElementById('data').value;
+            const dataInput = document.getElementById('data');
+
+            if (!data) {
+                document.getElementById('horariosContainer').style.display = 'none';
+                dataInput.style.borderColor = '#ddd';
+                dataInput.style.backgroundColor = '#fff';
+                return;
+            }
+
+            // Validar se a data selecionada é futura
+            const dataSelecionada = new Date(data);
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            if (dataSelecionada <= hoje) {
+                alert('A data deve ser futura!');
+                document.getElementById('data').value = '';
+                document.getElementById('horariosContainer').style.display = 'none';
+                return;
+            }
+
+            // Verificar se a data está disponível
+            const dataDisponivel = diasDisponiveisList.includes(data);
+
+            if (!dataDisponivel) {
+                // Dia indisponível - cor vermelha
+                dataInput.style.borderColor = '#dc3545';
+                dataInput.style.backgroundColor = '#ffe6e6';
+                document.getElementById('horariosContainer').style.display = 'none';
+                document.getElementById('loading').classList.remove('show');
+                return;
+            }
+
+            // Dia disponível - cor verde
+            dataInput.style.borderColor = '#28a745';
+            dataInput.style.backgroundColor = '#e6ffe6';
+
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('horariosContainer').style.display = 'none';
+
+            // Carregar horários disponíveis via API
+            fetch(`/api/horarios-disponiveis?data=${data}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.disponivel && data.horarios && data.horarios.length > 0) {
+                        exibirHorariosDisponiveis(data.horarios);
+                    } else {
+                        document.getElementById('loading').classList.remove('show');
+                        alert('Nenhum horário disponível para essa data');
+                        document.getElementById('horariosContainer').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    document.getElementById('loading').classList.remove('show');
+                    alert('Erro ao carregar horários');
+                });
+        }
+
+        function exibirHorariosDisponiveis(horarios) {
+            const container = document.getElementById('horariosContainer');
+            container.innerHTML = '';
+
+            horarios.forEach(horario => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'horario-btn';
+                button.textContent = horario;
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    selecionarHorario(this, horario);
+                };
+                container.appendChild(button);
+            });
+
+            document.getElementById('loading').classList.remove('show');
+            container.style.display = 'grid';
+        }
+
+        function selecionarHorario(button, horario) {
+            // Remove seleção anterior
+            document.querySelectorAll('.horario-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // Seleciona o novo horário
+            button.classList.add('selected');
+            document.getElementById('horario').value = horario;
+        }
+
+        // Validação do formulário
+        document.getElementById('formAgendamento').addEventListener('submit', function(e) {
+            const data = document.getElementById('data').value;
+            const horario = document.getElementById('horario').value;
+
+            if (!data) {
+                e.preventDefault();
+                alert('Por favor, selecione uma data');
+                return false;
+            }
+
+            if (!horario) {
+                e.preventDefault();
+                alert('Por favor, selecione um horário');
+                return false;
+            }
+
+            return true;
+        });
+
+        // Carregar datas ao iniciar a página
+        window.addEventListener('load', function() {
+            carregarDatasDisponiveis();
+            const dataInput = document.getElementById('data');
+            dataInput.addEventListener('change', carregarHorariosDisponiveis);
+        });
+    </script>
+</body>
+</html>
+
