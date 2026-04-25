@@ -2,10 +2,14 @@
 
 ## 5 PASSOS SIMPLES
 
+### 0️⃣ Adicione Dockerfile (Se não tiver)
+Os arquivos `Dockerfile` e `.dockerignore` já devem estar na raiz do projeto.
+
 ### 1️⃣ GitHub - Suba seu código
 ```bash
+cd C:\Users\leviv\OneDrive\Desktop\agenda\agenda
 git add .
-git commit -m "Ready to deploy"
+git commit -m "Ready to deploy with Docker"
 git push origin main
 ```
 
@@ -17,14 +21,17 @@ git push origin main
 ### 3️⃣ Criar Web Service
 - Clique: **New Web Service**
 - Selecione seu repositório
+- **Linguagem:** Docker (selecionará automático)
 - Nome: `meagendaai`
 
-### 4️⃣ Configurar Build
+### 4️⃣ Configurar Deploy
 | Campo | Valor |
 |-------|-------|
-| Build | `./mvnw clean package -DskipTests` |
-| Start | `java -jar target/agenda-0.0.1-SNAPSHOT.jar` |
+| Build Command | (deixe em branco) |
+| Start Command | (deixe em branco) |
 | Plan | FREE |
+
+**Não preencha Build/Start, deixe o Docker cuidar!**
 
 ### 5️⃣ Aguarde & Acesse
 - Status muda para "Live"
@@ -34,9 +41,9 @@ git push origin main
 ---
 
 ## ⏱️ TEMPO ESTIMADO
-- ⏳ Build: 2-5 min (primeira vez)
+- ⏳ Build Docker: 5-10 min (primeira vez - mais longo)
 - ✅ Deploy: 1-2 min
-- Total: ~5-7 minutos
+- Total: ~10-15 minutos
 
 ## 🔄 Atualizações Futuras
 Apenas faça push no GitHub que Render detecta e redeploya automaticamente!
@@ -49,6 +56,7 @@ git push origin main  # Render faz deploy automático
 
 ## 💡 DICAS
 - Free tier é suficiente para desenvolvimento
+- Docker é mais fácil que configurar Maven no Render
 - Dados em memória (perdem ao reiniciar)
 - Para produção, use PostgreSQL
 - Reinicia automaticamente após 15 min de inatividade

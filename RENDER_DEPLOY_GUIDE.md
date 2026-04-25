@@ -27,6 +27,17 @@
 
 ---
 
+## ✅ PASSO 0.5: Arquivos Necessários (IMPORTANTE!)
+
+Certifique-se de que você tem estes arquivos na raiz do projeto:
+- ✅ `Dockerfile` - Define como compilar e rodar a aplicação
+- ✅ `.dockerignore` - Lista arquivos para não incluir no build
+- ✅ `pom.xml` - Arquivo Maven (já existe no seu projeto)
+
+**Se não tiver, adicione agora antes de fazer push!**
+
+---
+
 ## 🔑 PASSO 2: Criar Conta no Render.com
 
 1. **Acesse:** render.com
@@ -47,18 +58,18 @@
    | Campo | Valor |
    |-------|-------|
    | **Name** | meagendaai (sem espaços) |
-   | **Environment** | Java (selecionará automático ao detectar pom.xml) |
+   | **Environment** | Docker (selecionará automático ao detectar Dockerfile) |
    | **Region** | Ohio (US) ou São Paulo (BR) |
    | **Branch** | main |
-   | **Build Command** | `./mvnw clean package -DskipTests` |
-   | **Start Command** | `java -jar target/agenda-0.0.1-SNAPSHOT.jar` |
+   | **Build Command** | (deixe em branco - Docker cuida) |
+   | **Start Command** | (deixe em branco - Dockerfile cuida) |
 
 5. **Plano:** Selecione **Free** (na parte inferior)
 
-⚠️ **IMPORTANTE:** Se aparecer mensagem de erro dizendo "package.json not found":
-   - O Render está detectando como Node.js
-   - Clique em **Disconnect** e tente conectar novamente
-   - Ou delete o repositório do Render e crie um novo
+⚠️ **IMPORTANTE:** 
+   - O Render detectará automaticamente o **Dockerfile** no repositório
+   - Não precisa adicionar Build Command ou Start Command
+   - Deixe os campos em branco para que use o Dockerfile
 
 ---
 
