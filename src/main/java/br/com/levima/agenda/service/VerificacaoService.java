@@ -26,12 +26,6 @@ public class VerificacaoService {
     private String vonageFromNumber;
 
     public boolean enviarCodigoVerificacao(String email, String celular, String codigo) {
-        // MODO DESENVOLVIMENTO: Apenas imprimir código no console
-        // Remover temporariamente o envio real de SMS via Vonage para evitar gastar créditos
-        logger.info("🔧 MODO DESENVOLVIMENTO - Envio de SMS desativado");
-        return enviarCodigoVerificacaoTeste(email, celular, codigo);
-
-        /* CÓDIGO COMENTADO PARA PRODUÇÃO - DESCOMENTE QUANDO ESTIVER PRONTO
         // Log das credenciais (sem mostrar valores sensíveis)
         logger.info("Tentando enviar SMS...");
         logger.info("API Key configurada: {}", !vonageApiKey.isEmpty());
@@ -103,7 +97,6 @@ public class VerificacaoService {
             logger.error("❌ Erro ao enviar SMS: {}", e.getMessage(), e);
             return false;
         }
-        */
     }
 
     // Método alternativo para teste (sem credenciais reais)
