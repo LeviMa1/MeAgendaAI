@@ -31,6 +31,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header > div:first-child {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header > div:first-child {
+                flex: 1;
+                text-align: center;
+            }
+
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         .header h1 {
@@ -352,8 +383,8 @@
                 <h1>🔐 Painel Administrativo</h1>
                 <p>Configure disponibilidade e visualize agendamentos</p>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/admin/contatos" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+            <div class="header-buttons">
+                <a href="/admin/contatos" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s; white-space: nowrap;">
                     👥 Ver Contatos
                 </a>
                 <form method="POST" action="/admin/logout" style="margin: 0;">
