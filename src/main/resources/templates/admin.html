@@ -61,6 +61,13 @@
             .header-buttons {
                 width: 100%;
                 justify-content: center;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .header-buttons > * {
+                flex: 1 1 auto;
+                text-align: center;
             }
         }
 
@@ -291,17 +298,17 @@
             margin-top: 8px;
         }
 
-        .status.confirmado {
+        .status-confirmado {
             background: #d4edda;
             color: #155724;
         }
 
-        .status.cancelado {
+        .status-cancelado {
             background: #f8d7da;
             color: #721c24;
         }
 
-        .status.pendente {
+        .status-pendente {
             background: #fff3cd;
             color: #856404;
         }

@@ -1,10 +1,23 @@
 package br.com.levima.agenda.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "contatos")
 public class Contato {
 
-    private String nome;
+    @Id
     private String email;
+
+    @Column(nullable = false)
+    private String nome;
+
     private String celular;
+
+    @Column(nullable = false)
     private String senha;
 
     public Contato() {
@@ -59,4 +72,3 @@ public class Contato {
                 '}';
     }
 }
-

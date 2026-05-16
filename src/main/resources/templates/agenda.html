@@ -129,17 +129,17 @@
             font-weight: bold;
         }
 
-        .status.confirmado {
+        .status-confirmado {
             background: #d4edda;
             color: #155724;
         }
 
-        .status.cancelado {
+        .status-cancelado {
             background: #f8d7da;
             color: #721c24;
         }
 
-        .status.pendente {
+        .status-pendente {
             background: #fff3cd;
             color: #856404;
         }
@@ -211,10 +211,32 @@
             text-decoration: none;
             margin-top: 20px;
             transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
         }
 
         .btn-voltar:hover {
             background: #5a6268;
+        }
+
+        .btn-logout {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 20px;
+            margin-left: 10px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
         }
 
         .alert {
@@ -282,6 +304,9 @@
             </div>
 
             <a href="/agendar" class="btn-novo-agendamento">+ Novo Agendamento</a>
+            <form method="POST" action="/logout" style="display:inline;">
+                <button type="submit" class="btn-logout" style="margin-left:10px;">Sair</button>
+            </form>
 
             <div class="agendamentos-section">
                 <h3>Meus Agendamentos</h3>
@@ -325,7 +350,7 @@
                 </div>
             </div>
 
-            <a href="/" class="btn-voltar">← Voltar</a>
+            <a href="/" class="btn-voltar">← Início</a>
         </div>
     </div>
 </body>

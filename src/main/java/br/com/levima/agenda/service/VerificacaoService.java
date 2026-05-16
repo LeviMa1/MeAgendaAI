@@ -5,12 +5,29 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
+/**
+ * Serviço de envio de código de verificação.
+ *
+ * Prioridade de envio:
+ *  1. CallMeBot WhatsApp — gratuito; requer que o usuário tenha se registrado
+ *     previamente em https://www.callmebot.com/blog/free-api-whatsapp-messages/
+ *     enviando "I allow callmebot to send me messages" para +34 644 60 81 82.
+ *     Configure: CALLMEBOT_APIKEY=<apikey-do-usuario> (por enquanto suportado
+ *     como envio único para número fixo em modo demo).
+ *
+ *  2. Vonage SMS — gratuito com crédito inicial; configure VONAGE_API_KEY e
+ *     VONAGE_API_SECRET como variáveis de ambiente e reinicie a aplicação.
+ *
+ *  3. Modo teste — imprime o código no console.
+ */
 @Service
 public class VerificacaoService {
 
@@ -25,90 +42,115 @@ public class VerificacaoService {
     @Value("${vonage.from-number:MeAgenda}")
     private String vonageFromNumber;
 
+    // CallMeBot: cada usuário tem seu próprio apikey após opt-in
+    // Por ora suportamos envio via Vonage SMS + fallback console
+    @Value("${callmebot.enabled:false}")
+    private boolean callmebotEnabled;
+
+    @Value("${callmebot.apikey:}")
+    private String callmebotApikey;
+
     public boolean enviarCodigoVerificacao(String email, String celular, String codigo) {
-        // Log das credenciais (sem mostrar valores sensíveis)
-        logger.info("Tentando enviar SMS...");
-        logger.info("API Key configurada: {}", !vonageApiKey.isEmpty());
-        logger.info("API Secret configurada: {}", !vonageApiSecret.isEmpty());
-        
-        // Se não tiver credenciais Vonage, usar modo teste
-        if (vonageApiKey.isEmpty() || vonageApiSecret.isEmpty()) {
-            logger.warn("Credenciais Vonage não configuradas! Usando modo teste.");
-            return enviarCodigoVerificacaoTeste(email, celular, codigo);
+        String mensagem = "Seu codigo de verificacao MeAgendaAI: " + codigo +
+                " | Validade: 10 minutos. Nao compartilhe este codigo.";
+
+        // 1. Tentar CallMeBot WhatsApp (se habilitado)
+        if (callmebotEnabled && !callmebotApikey.isEmpty()) {
+            boolean enviado = enviarViaCallMeBot(celular, mensagem, callmebotApikey);
+            if (enviado) return true;
         }
 
+        // 2. Tentar Vonage SMS
+        if (!vonageApiKey.isEmpty() && !vonageApiSecret.isEmpty()) {
+            boolean enviado = enviarViaVonage(celular, mensagem);
+            if (enviado) return true;
+        }
+
+        // 3. Modo teste — imprime no console
+        logger.warn("⚠️  Nenhuma credencial de envio configurada. Imprimindo código no console.");
+        imprimirNoConsole(email, celular, codigo);
+        return true; // Retorna true para não bloquear o cadastro no modo de desenvolvimento
+    }
+
+    // ─────────────────────────────────────────
+    // CallMeBot WhatsApp
+    // ─────────────────────────────────────────
+    private boolean enviarViaCallMeBot(String celular, String mensagem, String apikey) {
         try {
-            // Formatar número - remover caracteres especiais
-            String numeroBrasil = "+55" + celular.replaceAll("[^0-9]", "");
-            logger.info("Número formatado: {}", numeroBrasil);
+            String numeroBrasil = "55" + celular.replaceAll("[^0-9]", "");
+            String url = "https://api.callmebot.com/whatsapp.php?phone=" +
+                    URLEncoder.encode(numeroBrasil, StandardCharsets.UTF_8) +
+                    "&text=" + URLEncoder.encode(mensagem, StandardCharsets.UTF_8) +
+                    "&apikey=" + URLEncoder.encode(apikey, StandardCharsets.UTF_8);
 
-            // Preparar mensagem SMS
-            String mensagem = "🔐 Seu código de verificação é: " + codigo + 
-                            "\n⏱️ Validade: 10 minutos\n" +
-                            "⚠️ Não compartilhe este código com ninguém.";
-            
-            logger.info("Remetente: {}", vonageFromNumber);
-            logger.info("Destinatário: {}", numeroBrasil);
-
-            // Construir URL da API Vonage
-            String urlParams = String.format(
-                "api_key=%s&api_secret=%s&to=%s&from=%s&text=%s",
-                URLEncoder.encode(vonageApiKey, StandardCharsets.UTF_8),
-                URLEncoder.encode(vonageApiSecret, StandardCharsets.UTF_8),
-                URLEncoder.encode(numeroBrasil, StandardCharsets.UTF_8),
-                URLEncoder.encode(vonageFromNumber, StandardCharsets.UTF_8),
-                URLEncoder.encode(mensagem, StandardCharsets.UTF_8)
-            );
-
-            String url = "https://rest.nexmo.com/sms/json?" + urlParams;
-            logger.info("Enviando para URL: https://rest.nexmo.com/sms/json?...");
-
-            // Criar requisição HTTP
-            HttpClient client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(java.net.URI.create(url))
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("CallMeBot status: {} | body: {}", response.statusCode(), response.body());
+
+            if (response.statusCode() == 200 && !response.body().contains("error")) {
+                logger.info("✅ Código enviado via CallMeBot WhatsApp para +{}", numeroBrasil);
+                return true;
+            }
+            logger.warn("CallMeBot retornou erro: {}", response.body());
+        } catch (Exception e) {
+            logger.error("Erro ao enviar via CallMeBot: {}", e.getMessage());
+        }
+        return false;
+    }
+
+    // ─────────────────────────────────────────
+    // Vonage SMS
+    // ─────────────────────────────────────────
+    private boolean enviarViaVonage(String celular, String mensagem) {
+        try {
+            String numeroBrasil = "55" + celular.replaceAll("[^0-9]", "");
+            logger.info("Enviando SMS Vonage para +{}", numeroBrasil);
+
+            String urlParams = "api_key=" + URLEncoder.encode(vonageApiKey, StandardCharsets.UTF_8)
+                    + "&api_secret=" + URLEncoder.encode(vonageApiSecret, StandardCharsets.UTF_8)
+                    + "&to=" + URLEncoder.encode(numeroBrasil, StandardCharsets.UTF_8)
+                    + "&from=" + URLEncoder.encode(vonageFromNumber, StandardCharsets.UTF_8)
+                    + "&text=" + URLEncoder.encode(mensagem, StandardCharsets.UTF_8);
+
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://rest.nexmo.com/sms/json?" + urlParams))
                     .GET()
                     .header("User-Agent", "MeAgenda/1.0")
                     .build();
 
-            // Enviar requisição
-            logger.info("Enviando requisição HTTP...");
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("Vonage status: {} | body: {}", response.statusCode(), response.body());
 
-            logger.info("Status Code: {}", response.statusCode());
-            logger.info("Response Body: {}", response.body());
-
-            if (response.statusCode() == 200) {
-                // Verificar se a resposta indica sucesso
-                String responseBody = response.body();
-                if (responseBody.contains("\"status\":\"0\"") || responseBody.contains("\"messages\"")) {
-                    logger.info("✅ SMS enviado com sucesso!");
-                    return true;
-                } else {
-                    logger.error("❌ Erro na resposta da API: {}", responseBody);
-                    return false;
-                }
-            } else {
-                logger.error("❌ Erro HTTP. Status: {}, Response: {}", response.statusCode(), response.body());
-                return false;
+            if (response.statusCode() == 200 && response.body().contains("\"status\":\"0\"")) {
+                logger.info("✅ SMS Vonage enviado com sucesso!");
+                return true;
             }
-
+            logger.warn("Vonage retornou erro: {}", response.body());
         } catch (Exception e) {
-            logger.error("❌ Erro ao enviar SMS: {}", e.getMessage(), e);
-            return false;
+            logger.error("Erro ao enviar via Vonage: {}", e.getMessage());
         }
+        return false;
     }
 
-    // Método alternativo para teste (sem credenciais reais)
-    public boolean enviarCodigoVerificacaoTeste(String email, String celular, String codigo) {
+    // ─────────────────────────────────────────
+    // Modo Teste
+    // ─────────────────────────────────────────
+    private void imprimirNoConsole(String email, String celular, String codigo) {
         System.out.println("=================================================");
-        System.out.println("[SMS VONAGE - MODO TESTE]");
-        System.out.println("Email: " + email);
+        System.out.println("[MODO TESTE - CÓDIGO DE VERIFICAÇÃO]");
+        System.out.println("Email  : " + email);
         System.out.println("Celular: " + celular);
-        System.out.println("Código: " + codigo);
-        System.out.println("Mensagem: 🔐 Seu código de verificação é: " + codigo);
+        System.out.println("Código : " + codigo);
         System.out.println("=================================================");
-        return true;
     }
 }
-

@@ -1,18 +1,23 @@
 package br.com.levima.agenda.service;
 
 import br.com.levima.agenda.model.Agendamento;
+import br.com.levima.agenda.repository.AgendamentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
 
-    private static List<Agendamento> agendamentos = new ArrayList<>();
+    @Autowired
+    private AgendamentoRepository agendamentoRepository;
+
+    @Autowired
+    private AdminService adminService;
 
     /**
      * Cria um novo agendamento
@@ -21,37 +26,27 @@ public class AgendamentoService {
                                         LocalTime horario, String descricao) {
 
         // Validar se o horário já está marcado
-        boolean horarioOcupado = agendamentos.stream()
-                .anyMatch(a -> a.getData().equals(data) &&
-                             a.getHorario().equals(horario) &&
-                             a.getStatus().equals("confirmado"));
+        boolean horarioOcupado = agendamentoRepository
+                .existsByDataAndHorarioAndStatus(data, horario, "confirmado");
 
-        if (horarioOcupado) {
-            return null; // Horário já marcado
-        }
+        if (horarioOcupado) return null; // Horário já marcado
 
         Agendamento agendamento = new Agendamento(emailUsuario, nomeUsuario, data, horario, descricao);
-        agendamentos.add(agendamento);
-        return agendamento;
+        return agendamentoRepository.save(agendamento);
     }
 
     /**
      * Obtém todos os agendamentos de um usuário
      */
     public List<Agendamento> getAgendamentosUsuario(String emailUsuario) {
-        return agendamentos.stream()
-                .filter(a -> a.getEmailUsuario().equals(emailUsuario))
-                .collect(Collectors.toList());
+        return agendamentoRepository.findByEmailUsuario(emailUsuario);
     }
 
     /**
      * Obtém um agendamento por ID
      */
     public Agendamento getAgendamentoPorId(String id) {
-        return agendamentos.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return agendamentoRepository.findById(id).orElse(null);
     }
 
     /**
@@ -61,52 +56,44 @@ public class AgendamentoService {
         Agendamento agendamento = getAgendamentoPorId(id);
         if (agendamento != null) {
             agendamento.setStatus("cancelado");
+            agendamentoRepository.save(agendamento);
             return true;
         }
         return false;
     }
 
     /**
-     * Obtém horários disponíveis para uma data
+     * Retorna horários configurados pelo admin para a data, filtrando os já reservados.
      */
     public List<String> getHorariosDisponiveis(LocalDate data) {
-        List<String> horariosDisponiveis = new ArrayList<>();
-
-        // Horários de atendimento: 08:00 às 17:00, intervalo de 1 hora
-        for (int hora = 8; hora < 17; hora++) {
-            LocalTime horario = LocalTime.of(hora, 0);
-
-            // Verificar se horário não está ocupado
-            boolean estaOcupado = agendamentos.stream()
-                    .anyMatch(a -> a.getData().equals(data) &&
-                                 a.getHorario().equals(horario) &&
-                                 a.getStatus().equals("confirmado"));
-
-            if (!estaOcupado) {
-                horariosDisponiveis.add(horario.toString());
-            }
-        }
-
-        return horariosDisponiveis;
+        List<String> configurados = adminService.getHorariosPorData(data);
+        return configurados.stream()
+                .filter(h -> {
+                    try {
+                        LocalTime horario = LocalTime.parse(h);
+                        return !agendamentoRepository.existsByDataAndHorarioAndStatus(data, horario, "confirmado");
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     /**
      * Obtém todos os agendamentos (admin)
      */
     public List<Agendamento> getTodosAgendamentos() {
-        return new ArrayList<>(agendamentos);
+        return agendamentoRepository.findAll();
     }
 
     /**
      * Remove um agendamento completamente
      */
     public boolean removerAgendamento(String id) {
-        Agendamento agendamento = getAgendamentoPorId(id);
-        if (agendamento != null) {
-            agendamentos.remove(agendamento);
+        if (agendamentoRepository.existsById(id)) {
+            agendamentoRepository.deleteById(id);
             return true;
         }
         return false;
     }
 }
-

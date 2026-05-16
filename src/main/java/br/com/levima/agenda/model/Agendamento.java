@@ -1,17 +1,36 @@
 package br.com.levima.agenda.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Entity
+@Table(name = "agendamentos")
 public class Agendamento {
 
+    @Id
     private String id;
+
+    @Column(nullable = false)
     private String emailUsuario;
+
+    @Column(nullable = false)
     private String nomeUsuario;
+
+    @Column(nullable = false)
     private LocalDate data;
+
+    @Column(nullable = false)
     private LocalTime horario;
+
     private String descricao;
+
+    @Column(nullable = false)
     private String status; // "confirmado", "pendente", "cancelado"
+
     private long timestamp;
 
     public Agendamento() {
@@ -108,4 +127,3 @@ public class Agendamento {
                 '}';
     }
 }
-
