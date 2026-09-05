@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Agendamento - MeAgendaAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .loading { display: none; text-align: center; padding: 16px; }
+        .loading.show { display: block; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #667eea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 8px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Editar Agendamento</h1>
+            <p>Altere data, horario ou observacoes</p>
+        </div>
+        <div class="content">
+            <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+            <form id="formAgendamento" th:action="@{/agendar/editar(id=${agendamentoId})}" th:object="${agendamentoForm}" method="post">
+                <div class="form-group">
+                    <label>Tipo de servico *</label>
+                    <div class="servicos-selecao">
+                        <label th:each="servico : ${servicos}" class="servico-opcao">
+                            <input type="radio" th:field="*{servicoId}" th:value="${servico.id}" required>
+                            <div class="servico-opcao-body">
+                                <div class="servico-opcao-title">
+                                    <span th:text="${servico.nome}">Servico</span>
+                                    <span class="servico-badge" th:text="${servico.duracao}">60 min</span>
+                                </div>
+                                <div class="servico-opcao-desc" th:text="${servico.descricao}">Descricao</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="data">Data *</label>
+                    <input type="date" id="data" th:field="*{data}" required th:min="${dataMinima}">
+                </div>
+                <div class="form-group">
+                    <label>Horario *</label>
+                    <div id="loading" class="loading"><div class="spinner"></div><p>Carregando...</p></div>
+                    <div id="horariosContainer" class="horarios-disponiveis" style="display:none;"></div>
+                    <input type="hidden" id="horario" th:field="*{horario}" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Observacoes</label>
+                    <textarea id="descricao" th:field="*{descricao}"></textarea>
+                </div>
+                <div class="toolbar">
+                    <button type="submit" class="btn btn-primary">Salvar Alteracoes</button>
+                    <a th:href="@{/agenda}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        let horarioAtual = /*[[${agendamentoForm.horario}]]*/ '';
+        let diasDisponiveisList = [];
+
+        function carregarDatas() {
+            fetch('/api/datas-disponiveis').then(r => r.json()).then(d => { diasDisponiveisList = d.datas || []; });
+        }
+
+        function carregarHorarios() {
+            const data = document.getElementById('data').value;
+            if (!data || !diasDisponiveisList.includes(data)) return;
+            document.getElementById('loading').classList.add('show');
+            fetch('/api/horarios-disponiveis?data=' + data).then(r => r.json()).then(d => {
+                const container = document.getElementById('horariosContainer');
+                container.innerHTML = '';
+                (d.horarios || []).forEach(h => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button'; btn.className = 'horario-btn'; btn.textContent = h;
+                    if (h === horarioAtual) btn.classList.add('selected');
+                    btn.onclick = () => {
+                        document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        document.getElementById('horario').value = h;
+                        horarioAtual = h;
+                    };
+                    container.appendChild(btn);
+                });
+                document.getElementById('loading').classList.remove('show');
+                container.style.display = 'grid';
+                if (horarioAtual) document.getElementById('horario').value = horarioAtual;
+            });
+        }
+
+        window.addEventListener('load', () => {
+            carregarDatas();
+            document.getElementById('data').addEventListener('change', carregarHorarios);
+            setTimeout(carregarHorarios, 300);
+        });
+    </script>
+</body>
+</html>

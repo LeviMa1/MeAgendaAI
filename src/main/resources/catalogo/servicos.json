@@ -1,0 +1,77 @@
+{
+  "titulo": "Catalogo Adriani - Massagem",
+  "subtitulo": "Escolha o servico ideal para o seu momento",
+  "pdfUrl": "/docs/catalogo-adriani-massagem.pdf",
+  "servicos": [
+    {
+      "id": "relaxante-60",
+      "nome": "Massagem Relaxante",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Movimentos suaves para aliviar tensoes, reduzir estresse e promover bem-estar geral."
+    },
+    {
+      "id": "relaxante-90",
+      "nome": "Massagem Relaxante Premium",
+      "duracao": "90 min",
+      "preco": "Consulte",
+      "descricao": "Sessao prolongada com foco em relaxamento profundo do corpo e da mente."
+    },
+    {
+      "id": "terapeutica",
+      "nome": "Massagem Terapeutica",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Trabalho em areas especificas de dor ou contratura muscular com pressao moderada."
+    },
+    {
+      "id": "drenagem",
+      "nome": "Drenagem Linfatica",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Estimula a circulacao linfatica, auxilia na retencao de liquidos e sensacao de leveza."
+    },
+    {
+      "id": "modeladora",
+      "nome": "Massagem Modeladora",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Movimentos intensos para modelagem corporal e activacao da circulacao sanguinea."
+    },
+    {
+      "id": "desportiva",
+      "nome": "Massagem Desportiva",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Indicada para atletas e praticantes de actividade fisica; foco em recuperacao muscular."
+    },
+    {
+      "id": "reflexologia",
+      "nome": "Reflexologia Podal",
+      "duracao": "45 min",
+      "preco": "Consulte",
+      "descricao": "Tecnica nos pes com reflexos em diferentes pontos do corpo para equilibrio e relaxamento."
+    },
+    {
+      "id": "ventosas",
+      "nome": "Ventosas",
+      "duracao": "45 min",
+      "preco": "Consulte",
+      "descricao": "Tecnica complementar que melhora circulacao local e alivia tensao muscular."
+    },
+    {
+      "id": "liberacao",
+      "nome": "Liberacao Miofascial",
+      "duracao": "60 min",
+      "preco": "Consulte",
+      "descricao": "Trabalho nas fascias musculares para restaurar mobilidade e aliviar dores cronicas."
+    },
+    {
+      "id": "express",
+      "nome": "Quick Massage",
+      "duracao": "30 min",
+      "preco": "Consulte",
+      "descricao": "Sessao rapida para pescoco, ombros e costas; ideal para pausa no dia a dia."
+    }
+  ]
+}

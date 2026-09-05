@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${catalogo.titulo}">Catalogo</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <div class="container container-wide">
+        <div class="header">
+            <h1 th:text="${catalogo.titulo}">Catalogo</h1>
+            <p th:text="${catalogo.subtitulo}">Servicos disponiveis</p>
+        </div>
+        <div class="content">
+            <div class="toolbar">
+                <a th:href="@{/agenda}" class="btn btn-secondary">Voltar</a>
+                <a th:href="${catalogo.pdfUrl}" target="_blank" class="btn btn-primary">Abrir PDF completo</a>
+                <a th:if="${modoSelecao}" th:href="@{/agendar}" class="btn btn-secondary">Ir para agendamento</a>
+            </div>
+
+            <div class="catalogo-grid">
+                <div th:each="servico : ${catalogo.servicos}" class="servico-card">
+                    <div class="servico-card-header">
+                        <h3 th:text="${servico.nome}">Servico</h3>
+                        <span class="servico-badge" th:text="${servico.duracao}">60 min</span>
+                    </div>
+                    <p class="servico-desc" th:text="${servico.descricao}">Descricao</p>
+                    <div class="servico-footer">
+                        <strong th:text="${servico.preco}">Consulte</strong>
+                        <a th:href="@{/agendar(servico=${servico.id})}" class="btn btn-primary btn-sm">Agendar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pdf-viewer-section">
+                <h2 style="margin-bottom:12px;">Catalogo em PDF</h2>
+                <p style="color:#666;margin-bottom:12px;">
+                    Visualize o material completo abaixo ou faca o download para consultar offline.
+                </p>
+                <iframe th:src="${catalogo.pdfUrl}" class="pdf-viewer" title="Catalogo PDF"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

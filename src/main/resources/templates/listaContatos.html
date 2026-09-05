@@ -4,135 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Contatos</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 28px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            justify-content: center;
-        }
-
-        a {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .btn-novo {
-            background-color: #667eea;
-            color: white;
-        }
-
-        .btn-novo:hover {
-            background-color: #5568d3;
-        }
-
-        .btn-voltar {
-            background-color: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-voltar:hover {
-            background-color: #d0d0d0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        thead {
-            background-color: #f5f5f5;
-        }
-
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #ddd;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            color: #555;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .empty-message {
-            text-align: center;
-            color: #999;
-            padding: 40px;
-            font-size: 16px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-    <div class="container">
-        <h1>👥 Contatos Cadastrados</h1>
-
-        <div class="button-group">
-            <a href="/admin" class="btn-voltar">← Voltar ao Painel</a>
+    <div class="container container-wide">
+        <div class="header header-admin">
+            <div><h1>Contatos Cadastrados</h1></div>
+            <div class="toolbar">
+                <a th:href="@{/admin}" class="btn btn-secondary">Voltar ao Painel</a>
+                <a th:href="@{/admin/export/contatos.xlsx}" class="btn btn-primary">Exportar Excel</a>
+            </div>
         </div>
+        <div class="content">
+            <div th:if="${contatos.isEmpty()}" style="text-align:center;padding:40px;color:#999;">
+                Nenhum contato cadastrado.
+            </div>
 
-        <div th:if="${contatos.isEmpty()}" class="empty-message">
-            Nenhum contato cadastrado. <a href="/cadastro">Clique aqui para cadastrar um novo contato.</a>
+            <table th:if="${!contatos.isEmpty()}" style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#667eea;color:white;">
+                        <th style="padding:12px;text-align:left;">Nome</th>
+                        <th style="padding:12px;text-align:left;">Email</th>
+                        <th style="padding:12px;text-align:left;">Celular</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="contato : ${contatos}" style="border-bottom:1px solid #eee;">
+                        <td style="padding:12px;" th:text="${contato.nome}"></td>
+                        <td style="padding:12px;" th:text="${contato.email}"></td>
+                        <td style="padding:12px;" th:text="${contato.celular}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination" th:if="${totalPaginas > 1}">
+                <a th:if="${paginaAtual > 0}" th:href="@{/admin/contatos(page=${paginaAtual - 1})}">Anterior</a>
+                <span th:each="i : ${#numbers.sequence(0, totalPaginas - 1)}">
+                    <a th:href="@{/admin/contatos(page=${i})}" th:text="${i + 1}"
+                       th:classappend="${i == paginaAtual} ? 'active' : ''"></a>
+                </span>
+                <a th:if="${paginaAtual < totalPaginas - 1}" th:href="@{/admin/contatos(page=${paginaAtual + 1})}">Proxima</a>
+            </div>
         </div>
-
-        <table th:if="${!contatos.isEmpty()}">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Celular</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="contato : ${contatos}">
-                    <td th:text="${contato.nome}"></td>
-                    <td th:text="${contato.email}"></td>
-                    <td th:text="${contato.celular}"></td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </body>
 </html>
-

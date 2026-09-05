@@ -214,12 +214,12 @@
             📱 Informe seu celular - você receberá um código por SMS
         </div>
 
-        <form method="POST" action="/pedir-celular" onsubmit="return validarCelular()">
+        <form th:action="@{/pedir-celular}" method="post" onsubmit="return validarCelular()">
             <input type="hidden" name="email" th:value="${email}">
 
             <div class="form-group">
                 <label for="celular">Celular *</label>
-                <input type="text" id="celular" name="celular" placeholder="(XX) XXXXX-XXXX" required>
+                <input type="text" id="celular" name="celular" placeholder="(XX) XXXXX-XXXX" required maxlength="15">
             </div>
 
             <div class="button-group">

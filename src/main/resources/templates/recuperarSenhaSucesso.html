@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senha Alterada - MeAgendaAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-page">
+    <div class="auth-card" style="text-align:center;">
+        <div class="alert alert-success">
+            <span th:text="${mensagem}">Senha alterada com sucesso!</span>
+        </div>
+        <a th:href="@{/login}" class="btn btn-primary">Ir para Login</a>
+    </div>
+</body>
+</html>

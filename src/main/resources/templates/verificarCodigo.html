@@ -161,8 +161,8 @@
                 return false;
             }
 
-            if (codigo.length !== 4 || isNaN(codigo)) {
-                alert('O código deve conter exatamente 4 dígitos!');
+            if (codigo.length !== 6 || isNaN(codigo)) {
+                alert('O codigo deve conter exatamente 6 digitos!');
                 return false;
             }
 
@@ -189,12 +189,12 @@
             Digite o código recebido por SMS no celular <strong th:text="${celularMascarado}"></strong>
         </div>
 
-        <form method="POST" action="/verificar-codigo" onsubmit="return validarCodigo()">
+        <form th:action="@{/verificar-codigo}" method="post" onsubmit="return validarCodigo()">
             <input type="hidden" name="email" th:value="${email}">
 
             <div class="form-group">
-                <label for="codigo">Código de Verificação *</label>
-                <input type="text" id="codigo" name="codigo" class="code-input" placeholder="0000" maxlength="4" inputmode="numeric" required>
+                <label for="codigo">Codigo de Verificacao *</label>
+                <input type="text" id="codigo" name="codigo" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric" required>
             </div>
 
             <div class="button-group">

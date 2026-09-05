@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Dados locais ###
+data/
+*.mv.db
+*.trace.db
+*.lock.db
+agenda-db.*
+startup.log
+.env
+.env.*

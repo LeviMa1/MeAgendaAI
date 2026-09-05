@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Agendamento - MeAgendaAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
         * {
             margin: 0;
@@ -258,10 +259,28 @@
             </div>
 
 
-            <form id="formAgendamento" method="POST" action="/agendar">
+            <a th:href="@{/catalogo}" class="catalogo-link" target="_blank">Ver catalogo completo de servicos</a>
+
+            <form id="formAgendamento" th:action="@{/agendar}" th:object="${agendamentoForm}" method="post">
+                <div class="form-group">
+                    <label>Tipo de servico *</label>
+                    <div class="servicos-selecao">
+                        <label th:each="servico : ${servicos}" class="servico-opcao">
+                            <input type="radio" th:field="*{servicoId}" th:value="${servico.id}" required>
+                            <div class="servico-opcao-body">
+                                <div class="servico-opcao-title">
+                                    <span th:text="${servico.nome}">Servico</span>
+                                    <span class="servico-badge" th:text="${servico.duracao}">60 min</span>
+                                </div>
+                                <div class="servico-opcao-desc" th:text="${servico.descricao}">Descricao</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="data">Data do Agendamento *</label>
-                    <input type="date" id="data" name="data" required
+                    <input type="date" id="data" th:field="*{data}" required
                            th:min="${dataMinima}"
                            onchange="carregarHorariosDisponiveis()">
                 </div>
@@ -275,14 +294,14 @@
                     <div id="horariosContainer" class="horarios-disponiveis" style="display: none;">
                         <!-- Horários serão preenchidos via JavaScript -->
                     </div>
-                    <input type="hidden" id="horario" name="horario" required>
+                    <input type="hidden" id="horario" th:field="*{horario}" required>
                     <p style="margin-top: 10px; color: #666; font-size: 0.9em;">Selecione um horário acima</p>
                 </div>
 
                 <div class="form-group">
                     <label for="descricao">Observações</label>
-                    <textarea id="descricao" name="descricao"
-                              placeholder="Adicione observações sobre seu agendamento (opcional)"></textarea>
+                    <textarea id="descricao" th:field="*{descricao}"
+                              placeholder="Adicione observacoes (opcional)"></textarea>
                 </div>
 
                 <div class="button-group">
@@ -405,8 +424,15 @@
 
         // Validação do formulário
         document.getElementById('formAgendamento').addEventListener('submit', function(e) {
+            const servico = document.querySelector('input[name="servicoId"]:checked');
             const data = document.getElementById('data').value;
             const horario = document.getElementById('horario').value;
+
+            if (!servico) {
+                e.preventDefault();
+                alert('Por favor, selecione um servico');
+                return false;
+            }
 
             if (!data) {
                 e.preventDefault();

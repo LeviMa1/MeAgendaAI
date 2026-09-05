@@ -391,10 +391,10 @@
                 <p>Configure disponibilidade e visualize agendamentos</p>
             </div>
             <div class="header-buttons">
-                <a href="/admin/contatos" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s; white-space: nowrap;">
-                    👥 Ver Contatos
-                </a>
-                <form method="POST" action="/admin/logout" style="margin: 0;">
+                <a href="/admin/contatos" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600;">Contatos</a>
+                <a th:href="@{/admin/export/agendamentos.xlsx}" style="background: #17a2b8; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600;">Exportar Agendamentos</a>
+                <a th:href="@{/admin/export/contatos.xlsx}" style="background: #17a2b8; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600;">Exportar Contatos</a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="logout-btn">Sair</button>
                 </form>
             </div>
@@ -410,15 +410,19 @@
 
         <div class="stats">
             <div class="stat-box">
-                <div class="stat-number" th:text="${agendamentos.size()}">0</div>
-                <div class="stat-label">Total de Agendamentos</div>
+                <div class="stat-number" th:text="${totalConfirmados + totalPendentes + totalCancelados}">0</div>
+                <div class="stat-label">Total</div>
             </div>
             <div class="stat-box">
-                <div class="stat-number" th:text="${#lists.size(agendamentos.?[status == 'confirmado'])}">0</div>
+                <div class="stat-number" th:text="${totalConfirmados}">0</div>
                 <div class="stat-label">Confirmados</div>
             </div>
             <div class="stat-box">
-                <div class="stat-number" th:text="${#lists.size(agendamentos.?[status == 'cancelado'])}">0</div>
+                <div class="stat-number" th:text="${totalPendentes}">0</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" th:text="${totalCancelados}">0</div>
                 <div class="stat-label">Cancelados</div>
             </div>
         </div>
@@ -428,7 +432,7 @@
             <div class="section horarios-section">
                 <h2>⏰ Configurar Disponibilidade de Atendimento</h2>
 
-                <form method="POST" action="/admin/gerar-horarios" id="formHorarios">
+                <form th:action="@{/admin/gerar-horarios}" method="post" id="formHorarios">
                     <!-- Seleção de Datas -->
                     <div class="form-group">
                         <label for="datas">📅 Selecione as Datas Disponíveis</label>
@@ -470,6 +474,7 @@
                             <label for="horaFim">⏱️ Horário de Encerramento</label>
                             <select id="horaFim" name="horaFim" required>
                                 <option value="">Selecione...</option>
+                                <option value="12">12:00</option>
                                 <option value="13">13:00</option>
                                 <option value="14">14:00</option>
                                 <option value="15">15:00</option>
@@ -520,9 +525,16 @@
 
                 <div th:unless="${horariosDisponiveisPorData.isEmpty()}">
                     <div th:each="entrada : ${horariosDisponiveisPorData.entrySet()}" style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-                        <h4 style="color: #333; margin-bottom: 10px;">
-                            <span th:text="${#temporals.format(entrada.getKey(), 'EEEE, dd/MM/yyyy')}"></span>
-                        </h4>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <h4 style="color: #333; margin: 0;">
+                                <span th:text="${#temporals.format(entrada.getKey(), 'EEEE, dd/MM/yyyy')}"></span>
+                            </h4>
+                            <form th:action="@{/admin/remover-data}" method="post" style="margin:0;">
+                                <input type="hidden" name="data" th:value="${entrada.getKey()}">
+                                <button type="submit" style="background:#dc3545;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;"
+                                        onclick="return confirm('Remover esta data?')">Remover</button>
+                            </form>
+                        </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                             <span th:each="horario : ${entrada.getValue()}" style="background: #667eea; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em;">
                                 <span th:text="${horario}"></span>
@@ -550,14 +562,38 @@
 
                         <div class="agendamento-info">
                             <p><strong>👤 Cliente:</strong> <span th:text="${agendamento.nomeUsuario}"></span></p>
+                            <p><strong>💆 Servico:</strong> <span th:text="${agendamento.servicoNome != null ? agendamento.servicoNome : 'Nao informado'}"></span></p>
                             <p><strong>📧 Email:</strong> <span th:text="${agendamento.emailUsuario}"></span></p>
                             <p th:if="${agendamento.descricao != null and agendamento.descricao != ''}">
                                 <strong>📝 Observações:</strong> <span th:text="${agendamento.descricao}"></span>
                             </p>
-                            <span class="status" th:classappend="${'status-' + agendamento.status.toLowerCase()}"
-                                  th:text="${agendamento.status}"></span>
+                            <span class="status" th:classappend="${'status-' + agendamento.status.valor}"
+                                  th:text="${agendamento.status.valor}"></span>
+                            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;" th:if="${agendamento.status.valor == 'pendente'}">
+                                <form th:action="@{/admin/agendamento/confirmar}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${agendamento.id}">
+                                    <button type="submit" style="background:#28a745;color:white;border:none;padding:8px 14px;border-radius:5px;cursor:pointer;">Confirmar</button>
+                                </form>
+                                <form th:action="@{/admin/agendamento/rejeitar}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${agendamento.id}">
+                                    <button type="submit" style="background:#ffc107;color:#333;border:none;padding:8px 14px;border-radius:5px;cursor:pointer;">Rejeitar</button>
+                                </form>
+                            </div>
+                            <form th:action="@{/admin/agendamento/remover}" method="post" style="margin-top:8px;">
+                                <input type="hidden" name="id" th:value="${agendamento.id}">
+                                <button type="submit" style="background:#6c757d;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;"
+                                        onclick="return confirm('Remover permanentemente?')">Excluir</button>
+                            </form>
                         </div>
                     </div>
+                </div>
+
+                <div class="pagination" th:if="${totalPaginas > 1}" style="display:flex;gap:8px;justify-content:center;margin-top:20px;">
+                    <a th:if="${paginaAtual > 0}" th:href="@{/admin(page=${paginaAtual - 1})}">Anterior</a>
+                    <span th:each="i : ${#numbers.sequence(0, totalPaginas - 1)}">
+                        <a th:href="@{/admin(page=${i})}" th:text="${i + 1}"></a>
+                    </span>
+                    <a th:if="${paginaAtual < totalPaginas - 1}" th:href="@{/admin(page=${paginaAtual + 1})}">Proxima</a>
                 </div>
             </div>
         </div>

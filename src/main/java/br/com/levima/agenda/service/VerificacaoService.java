@@ -69,7 +69,18 @@ public class VerificacaoService {
         // 3. Modo teste — imprime no console
         logger.warn("⚠️  Nenhuma credencial de envio configurada. Imprimindo código no console.");
         imprimirNoConsole(email, celular, codigo);
-        return true; // Retorna true para não bloquear o cadastro no modo de desenvolvimento
+        return true;
+    }
+
+    public void enviarMensagem(String celular, String mensagem) {
+        String celularLimpo = celular.replaceAll("[^0-9]", "");
+        if (callmebotEnabled && !callmebotApikey.isEmpty()) {
+            if (enviarViaCallMeBot(celularLimpo, mensagem, callmebotApikey)) return;
+        }
+        if (!vonageApiKey.isEmpty() && !vonageApiSecret.isEmpty()) {
+            if (enviarViaVonage(celularLimpo, mensagem)) return;
+        }
+        logger.warn("[MODO TESTE] Mensagem para {}: {}", celularLimpo, mensagem);
     }
 
     // ─────────────────────────────────────────

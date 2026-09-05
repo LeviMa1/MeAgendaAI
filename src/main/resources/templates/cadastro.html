@@ -216,26 +216,26 @@
 
         <div th:if="${erro}" class="error-message" th:text="${erro}"></div>
 
-        <form method="POST" action="/cadastro" onsubmit="return validarSenhas()">
+        <form th:action="@{/cadastro}" th:object="${cadastroForm}" method="post" onsubmit="return validarSenhas()">
             <div class="form-group">
                 <label for="nome">Nome *</label>
-                <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+                <input type="text" id="nome" th:field="*{nome}" placeholder="Digite seu nome completo" required>
             </div>
 
             <div class="form-group">
                 <label for="email">Email *</label>
-                <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required>
+                <input type="email" id="email" th:field="*{email}" placeholder="seu.email@exemplo.com" required>
             </div>
 
 
             <div class="form-group">
                 <label for="senha">Senha *</label>
-                <input type="password" id="senha" name="senha" placeholder="Digite uma senha segura" required>
+                <input type="password" id="senha" th:field="*{senha}" placeholder="Digite uma senha segura" required>
             </div>
 
             <div class="form-group">
-                <label for="confirmaSenha">Confirmação de Senha *</label>
-                <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Confirme sua senha" required>
+                <label for="confirmaSenha">Confirmacao de Senha *</label>
+                <input type="password" id="confirmaSenha" th:field="*{confirmaSenha}" placeholder="Confirme sua senha" required>
             </div>
 
             <div class="button-group">

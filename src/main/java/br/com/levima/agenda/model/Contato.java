@@ -64,11 +64,6 @@ public class Contato {
 
     @Override
     public String toString() {
-        return "Contato{" +
-                "nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", celular='" + celular + '\'' +
-                ", senha='" + senha + '\'' +
-                '}';
+        return "Contato{nome='" + nome + "', email='" + email + "', celular='" + celular + "'}";
     }
 }
