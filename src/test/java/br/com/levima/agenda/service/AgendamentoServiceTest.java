@@ -46,32 +46,32 @@ class AgendamentoServiceTest {
     void deveCriarAgendamentoComStatusPendente() {
         LocalDate data = LocalDate.now().plusDays(2);
         Agendamento ag = agendamentoService.criarAgendamento(
-                "teste@email.com", "Teste", data, LocalTime.of(9, 0), "relaxante-60", "Consulta");
+                "teste@email.com", "Teste", data, LocalTime.of(9, 0), "relaxamento-muscular", "Consulta");
         assertNotNull(ag);
         assertEquals(StatusAgendamento.PENDENTE, ag.getStatus());
-        assertEquals("Massagem Relaxante", ag.getServicoNome());
+        assertEquals("Relaxamento Muscular", ag.getServicoNome());
     }
 
     @Test
     void deveImpedirHorarioDuplicado() {
         LocalDate data = LocalDate.now().plusDays(2);
-        agendamentoService.criarAgendamento("a@email.com", "A", data, LocalTime.of(10, 0), "relaxante-60", "");
+        agendamentoService.criarAgendamento("a@email.com", "A", data, LocalTime.of(10, 0), "relaxamento-muscular", "");
         assertThrows(IllegalStateException.class, () ->
-                agendamentoService.criarAgendamento("b@email.com", "B", data, LocalTime.of(10, 0), "terapeutica", ""));
+                agendamentoService.criarAgendamento("b@email.com", "B", data, LocalTime.of(10, 0), "alivio-tencoes", ""));
     }
 
     @Test
     void deveRejeitarDataSemDisponibilidadeAdmin() {
         LocalDate data = LocalDate.now().plusDays(10);
         assertThrows(IllegalArgumentException.class, () ->
-                agendamentoService.criarAgendamento("a@email.com", "A", data, LocalTime.of(9, 0), "relaxante-60", ""));
+                agendamentoService.criarAgendamento("a@email.com", "A", data, LocalTime.of(9, 0), "relaxamento-muscular", ""));
     }
 
     @Test
     void deveCancelarAgendamento() {
         LocalDate data = LocalDate.now().plusDays(2);
         Agendamento ag = agendamentoService.criarAgendamento(
-                "a@email.com", "A", data, LocalTime.of(11, 0), "relaxante-60", "");
+                "a@email.com", "A", data, LocalTime.of(11, 0), "relaxamento-muscular", "");
         assertTrue(agendamentoService.cancelarAgendamento(ag.getId()));
         assertEquals(StatusAgendamento.CANCELADO,
                 agendamentoRepository.findById(ag.getId()).orElseThrow().getStatus());

@@ -1,77 +1,42 @@
 {
-  "titulo": "Catalogo Adriani - Massagem",
-  "subtitulo": "Escolha o servico ideal para o seu momento",
+  "titulo": "Catálogo Adriani - Massagem",
+  "subtitulo": "Escolha o serviço ideal para o seu momento",
   "pdfUrl": "/docs/catalogo-adriani-massagem.pdf",
   "servicos": [
     {
-      "id": "relaxante-60",
-      "nome": "Massagem Relaxante",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Movimentos suaves para aliviar tensoes, reduzir estresse e promover bem-estar geral."
+      "id": "relaxamento-muscular",
+      "nome": "Relaxamento Muscular",
+      "duracao": "50 min",
+      "preco": "R$ 90,00",
+      "descricao": "Massagem relaxante + Pistola terapêutica. Indicado para estresse e tensão muscular."
     },
     {
-      "id": "relaxante-90",
-      "nome": "Massagem Relaxante Premium",
-      "duracao": "90 min",
-      "preco": "Consulte",
-      "descricao": "Sessao prolongada com foco em relaxamento profundo do corpo e da mente."
+      "id": "alivio-tencoes",
+      "nome": "Alívio de Tensões",
+      "duracao": "50 min",
+      "preco": "R$ 100,00",
+      "descricao": "Liberação miofascial + Ventosaterapia. Indicado para dores musculares e contraturas."
     },
     {
-      "id": "terapeutica",
-      "nome": "Massagem Terapeutica",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Trabalho em areas especificas de dor ou contratura muscular com pressao moderada."
+      "id": "relaxamento-profundo",
+      "nome": "Relaxamento Profundo",
+      "duracao": "50 min",
+      "preco": "R$ 100,00",
+      "descricao": "Massagem relaxante + Bambu terapia. Indicado para relaxamento intenso e bem-estar."
     },
     {
-      "id": "drenagem",
-      "nome": "Drenagem Linfatica",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Estimula a circulacao linfatica, auxilia na retencao de liquidos e sensacao de leveza."
+      "id": "recuperacao-muscular",
+      "nome": "Recuperação Muscular",
+      "duracao": "50 min",
+      "preco": "R$ 100,00",
+      "descricao": "Liberação miofascial + Pistola terapêutica. Indicado para dor muscular e fadiga."
     },
     {
-      "id": "modeladora",
-      "nome": "Massagem Modeladora",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Movimentos intensos para modelagem corporal e activacao da circulacao sanguinea."
-    },
-    {
-      "id": "desportiva",
-      "nome": "Massagem Desportiva",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Indicada para atletas e praticantes de actividade fisica; foco em recuperacao muscular."
-    },
-    {
-      "id": "reflexologia",
-      "nome": "Reflexologia Podal",
-      "duracao": "45 min",
-      "preco": "Consulte",
-      "descricao": "Tecnica nos pes com reflexos em diferentes pontos do corpo para equilibrio e relaxamento."
-    },
-    {
-      "id": "ventosas",
-      "nome": "Ventosas",
-      "duracao": "45 min",
-      "preco": "Consulte",
-      "descricao": "Tecnica complementar que melhora circulacao local e alivia tensao muscular."
-    },
-    {
-      "id": "liberacao",
-      "nome": "Liberacao Miofascial",
-      "duracao": "60 min",
-      "preco": "Consulte",
-      "descricao": "Trabalho nas fascias musculares para restaurar mobilidade e aliviar dores cronicas."
-    },
-    {
-      "id": "express",
-      "nome": "Quick Massage",
-      "duracao": "30 min",
-      "preco": "Consulte",
-      "descricao": "Sessao rapida para pescoco, ombros e costas; ideal para pausa no dia a dia."
+      "id": "cuidado-completo",
+      "nome": "Cuidado Completo",
+      "duracao": "50 min",
+      "preco": "R$ 120,00",
+      "descricao": "Massagem relaxante + Liberação miofascial + Ventosaterapia + Pistola terapêutica ou Bambu terapia. Indicado para dores, tensão muscular e relaxamento geral. Benefícios: alívio profundo de dores e tensões musculares; melhora da circulação e oxigenação dos tecidos; redução do estresse e da ansiedade; mais mobilidade, leveza e bem-estar; relaxamento completo do corpo e da mente."
     }
   ]
 }
